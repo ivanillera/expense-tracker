@@ -1,9 +1,11 @@
 import React from "react";
 import { useAddTransaction } from "../../hooks/useAddTransaction";
 import { useState } from "react";
+import { useGetTransactions } from "../../hooks/useGetTransactions";
 
 export const ExpenseTracker = () => {
   const { addTransaction } = useAddTransaction();
+  const { transactions } = useGetTransactions();
 
   // default values
   const [description, setDescription] = useState("");
@@ -74,6 +76,27 @@ export const ExpenseTracker = () => {
       </form>
 
       <div className="bg-red-400">Transactions</div>
+      <ul>
+        {transactions.map((transaction) => {
+          const { description, transactionAmount, transactionType } =
+            transaction;
+          return (
+            <li>
+              <h3>{description}</h3>
+              <p>
+                ${transactionAmount} ---{" "}
+                <label
+                  style={{
+                    color: transactionType === "expense" ? "red" : "green",
+                  }}
+                >
+                  {transactionType}
+                </label>
+              </p>
+            </li>
+          );
+        })}
+      </ul>
     </>
   );
 };
