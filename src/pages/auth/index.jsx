@@ -1,14 +1,12 @@
 import React from "react";
-import {auth, provider} from "../../config/firebase-config";
-import {signInWithPopup} from 'firebase/auth';
-import {useNavigate} from 'react-router-dom';
+import { auth, provider } from "../../config/firebase-config";
+import { signInWithPopup } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 export const Auth = () => {
-
   const navigate = useNavigate();
 
-
-  const signInWithGoogle = async() => {
+  const signInWithGoogle = async () => {
     const results = await signInWithPopup(auth, provider);
     console.log(results);
     const authInfo = {
@@ -16,11 +14,10 @@ export const Auth = () => {
       name: results.user.displayName,
       profilePhoto: results.user.photoURL,
       isAuth: true,
-    }
-    localStorage.setItem("auth", JSON.stringify(authInfo))
+    };
+    localStorage.setItem("auth", JSON.stringify(authInfo));
     navigate("/expense-tracker");
-
-  }
+  };
   return (
     <div class="px-6 sm:px-0 max-w-sm">
       <button

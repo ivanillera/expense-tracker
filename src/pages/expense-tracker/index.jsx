@@ -1,18 +1,24 @@
 import React from "react";
 import { useAddTransaction } from "../../hooks/useAddTransaction";
+import { useState } from "react";
 
 export const ExpenseTracker = () => {
   const { addTransaction } = useAddTransaction();
 
+  // default values
+  const [description, setDescription] = useState("");
+  const [transactionAmount, setTransactionAmount] = useState(0);
+  const [transactionType, setTransactionType] = useState("expense");
+
   const onSubmit = async (e) => {
     e.preventDefault();
     addTransaction({
-      description:"Haircut",
-      transactionAmount:22,
-      transactionType:"expense"
+      description,
+      transactionAmount,
+      transactionType,
     });
   };
-  
+
   return (
     <>
       <div className="bg-red-100 flex justify-between p-20">
@@ -34,11 +40,33 @@ export const ExpenseTracker = () => {
         className="add-transaction flex justify-center bg-red-300"
         onSubmit={onSubmit}
       >
-        <input type="text" placeholder="Description" required />
-        <input type="number" placeholder="Amount" required />
-        <input type="radio" id="expense" value="expense" />
+        <input
+          type="text"
+          placeholder="Description"
+          required
+          onChange={(e) => setDescription(e.target.value)}
+        />
+        <input
+          type="number"
+          placeholder="Amount"
+          required
+          onChange={(e) => setTransactionAmount(e.target.value)}
+        />
+        <input
+          type="radio"
+          id="expense"
+          value="expense"
+          checked={transactionType === "expense"}
+          onChange={(e) => setTransactionType(e.target.value)}
+        />
         <label htmlFor="expense">Expense</label>
-        <input type="radio" id="income" value="income" />
+        <input
+          type="radio"
+          id="income"
+          value="income"
+          checked={transactionType === "income"}
+          onChange={(e) => setTransactionType(e.target.value)}
+        />
         <label htmlFor="income">Income</label>
         <button className="bg-gray-200" type="submit">
           Add transaction
