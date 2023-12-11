@@ -20,51 +20,54 @@ export const useGetTransactions = () => {
   const transactionCollectionRef = collection(db, "transactions");
   const { userID } = useGetUserInfo();
 
-  const getTransactions = async () => {
-    let unsubscribe;
-    try {
-      const queryTransactions = query(
-        transactionCollectionRef,
-        where("userID", "==", userID),
-        orderBy("createdAt")
-      );
-
-      unsubscribe = onSnapshot(queryTransactions, (snapshot) => {
-        let docs = [];
-        let totalIncome = 0;
-        let totalExpenses = 0;
-
-        snapshot.forEach((doc) => {
-          const data = doc.data();
-          const id = doc.id;
-
-          docs.push({ ...data, id });
-
-          if (data.transactionType === "expense") {
-            totalExpenses += Number(data.transactionAmount);
-          } else {
-            totalIncome += Number(data.transactionAmount);
-          }
-        });
-        setTransactions(docs);
-
-        let balance = totalIncome - totalExpenses;
-        setTransactionsTotals({
-          balance,
-          expenses: totalExpenses,
-          income: totalIncome,
-        });
-      });
-    } catch (err) {
-      console.error(err);
-    }
-
-    return () => unsubscribe();
-  };
-
   useEffect(() => {
-    getTransactions();
-  }, []);
+    const getTransactions = async () => {
+      let unsubscribe;
+      try {
+        const queryTransactions = query(
+          transactionCollectionRef,
+          where("userID", "==", userID),
+          orderBy("createdAt")
+        );
+
+        unsubscribe = onSnapshot(queryTransactions, (snapshot) => {
+          let docs = [];
+          let totalIncome = 0;
+          let totalExpenses = 0;
+
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            const id = doc.id;
+
+            docs.push({ ...data, id });
+
+            if (data.transactionType === "expense") {
+              totalExpenses += Number(data.transactionAmount);
+            } else {
+              totalIncome += Number(data.transactionAmount);
+            }
+          });
+          setTransactions(docs);
+
+          let balance = totalIncome - totalExpenses;
+          setTransactionsTotals({
+            balance,
+            expenses: totalExpenses,
+            income: totalIncome,
+          });
+        });
+      } catch (err) {
+        console.error(err);
+      }
+
+      return () => unsubscribe();
+    };
+
+    getTransactions(); // Invoke the function here
+
+    // You might need to include userID and transactionCollectionRef in the dependency array
+    // if they are being used inside the getTransactions function.
+  }, [userID, transactionCollectionRef]);
 
   return { transactions, transactionTotals };
 };
