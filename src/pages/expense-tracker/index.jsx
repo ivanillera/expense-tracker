@@ -1,11 +1,16 @@
-import React from "react";
-import { useAddTransaction } from "../../hooks/useAddTransaction";
 import { useState } from "react";
+import { signOut } from "firebase/auth";
+import { useAddTransaction } from "../../hooks/useAddTransaction";
 import { useGetTransactions } from "../../hooks/useGetTransactions";
+import { useGetUserInfo } from "../../hooks/useGetUserInfo";
+import { useNavigate } from "react-router-dom";
+import { auth } from "../../config/firebase-config";
 
 export const ExpenseTracker = () => {
   const { addTransaction } = useAddTransaction();
   const { transactions } = useGetTransactions();
+  const { name, profilePhoto } = useGetUserInfo();
+  const navigate = useNavigate();
 
   // default values
   const [description, setDescription] = useState("");
@@ -21,16 +26,33 @@ export const ExpenseTracker = () => {
     });
   };
 
+  const signUserOut = async () => {
+    try {
+      await signOut(auth);
+      localStorage.clear();
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <>
       <div className="bg-red-100 flex justify-between p-20">
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-          Expense Tracker
+          {name}'s Expense Tracker
         </h1>
+
         <h1 className="text-2xl font-bold tracking-tight text-gray-900">
           {" "}
           Balance: $0.00
         </h1>
+        {profilePhoto && (
+          <div>
+            <img src={profilePhoto}></img>
+            <button onClick={signUserOut}>Sign Out</button>
+          </div>
+        )}
       </div>
 
       <div className="bg-red-200 flex justify-between p-10">
