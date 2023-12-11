@@ -8,7 +8,7 @@ import { auth } from "../../config/firebase-config";
 
 export const ExpenseTracker = () => {
   const { addTransaction } = useAddTransaction();
-  const { transactions } = useGetTransactions();
+  const { transactions, transactionTotals } = useGetTransactions();
   const { name, profilePhoto } = useGetUserInfo();
   const navigate = useNavigate();
 
@@ -16,6 +16,7 @@ export const ExpenseTracker = () => {
   const [description, setDescription] = useState("");
   const [transactionAmount, setTransactionAmount] = useState(0);
   const [transactionType, setTransactionType] = useState("expense");
+  const { balance, income, expenses } = transactionTotals;
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -24,6 +25,9 @@ export const ExpenseTracker = () => {
       transactionAmount,
       transactionType,
     });
+
+    setDescription("");
+    setTransactionAmount("");
   };
 
   const signUserOut = async () => {
@@ -44,8 +48,7 @@ export const ExpenseTracker = () => {
         </h1>
 
         <h1 className="text-2xl font-bold tracking-tight text-gray-900">
-          {" "}
-          Balance: $0.00
+          {balance >= 0 ? <h2>${balance}</h2> : <h2>-${balance * -1}</h2>}
         </h1>
         {profilePhoto && (
           <div>
@@ -56,8 +59,8 @@ export const ExpenseTracker = () => {
       </div>
 
       <div className="bg-red-200 flex justify-between p-10">
-        <div>income $0.00</div>
-        <div>expenses $0.00</div>
+        <div>income ${income}</div>
+        <div>expenses ${expenses}</div>
       </div>
 
       <form
@@ -69,12 +72,14 @@ export const ExpenseTracker = () => {
           placeholder="Description"
           required
           onChange={(e) => setDescription(e.target.value)}
+          value={description}
         />
         <input
           type="number"
           placeholder="Amount"
           required
           onChange={(e) => setTransactionAmount(e.target.value)}
+          value={transactionAmount}
         />
         <input
           type="radio"
