@@ -48,8 +48,13 @@ export const ExpenseTracker = () => {
         </h1>
 
         <h1 className="text-2xl font-bold tracking-tight text-gray-900">
-          {balance >= 0 ? <h2>${balance}</h2> : <h2>-${balance * -1}</h2>}
+          {balance >= 0 ? (
+            <span>${balance}</span>
+          ) : (
+            <span>-${balance * -1}</span>
+          )}
         </h1>
+
         {profilePhoto && (
           <div>
             <img src={profilePhoto} alt="profilePicture"></img>
@@ -105,10 +110,10 @@ export const ExpenseTracker = () => {
       <div className="bg-red-400">Transactions</div>
       <ul>
         {transactions.map((transaction) => {
-          const { description, transactionAmount, transactionType } =
+          const { id, description, transactionAmount, transactionType } =
             transaction;
           return (
-            <li>
+            <li key={id}>
               <h3>{description}</h3>
               <p>
                 ${transactionAmount} ---{" "}
